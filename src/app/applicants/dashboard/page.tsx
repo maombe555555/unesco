@@ -55,11 +55,11 @@ export default function ApplicantDashboard() {
         <aside className="w-full md:w-64 bg-gray-800 text-white p-6 rounded-lg shadow-md">
           <h3 className="text-2xl font-bold mb-4">Dashboard</h3>
           <nav className="space-y-4">
-            <Link href="/applicant/dashboard" className="block hover:text-gray-400">Home</Link>
-            <Link href="/applicants/Myapplication" className="block hover:text-gray-400">My Applications</Link>
-            <Link href="/applicants/combinedform" className="block hover:text-gray-400">New Application</Link>
-            <Link href="/applicant/Edit" className="block hover:text-gray-400">Edit Profile</Link>
-            <Link href="/logout" className="block hover:text-gray-400">Logout</Link>
+            <Link href="/applicants/dashboard" className="block hover:text-gray-400">Home</Link>
+            <Link href="/applicants/dashboard/Myapplication" className="block hover:text-gray-400">My Applications</Link>
+            <Link href="/applicants/dashboard/process" className="block hover:text-gray-400">New Application</Link>
+            <Link href="/applicants/ dashboard/Profile" className="block hover:text-gray-400">Edit Profile</Link>
+            <Link href="/" className="block hover:text-gray-400">Logout</Link>
           </nav>
         </aside>
         
@@ -70,19 +70,13 @@ export default function ApplicantDashboard() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold mb-4 text-gray-800">My Applications</h2>
               <Link 
-                href="/applicants/combinedform" 
+                href="/applicants/dashboard/process" 
                 className="bg-blue-500 text-white font-medium py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300"
               >
                 Create New Application
               </Link>
             </div>
-            <ul className="space-y-3">
-              <li className="bg-green-100 text-green-800 p-3 rounded-md">Application 1: Approved</li>
-              <li className="bg-yellow-100 text-yellow-800 p-3 rounded-md">Application 2: Pending Review</li>
-              <li className="bg-red-100 text-red-800 p-3 rounded-md">
-                Application 3: Rejected - Missing details
-              </li>
-            </ul>
+           
           </section>
           
           {/* Notification Settings */}

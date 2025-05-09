@@ -1,36 +1,37 @@
-import { NextResponse } from "next/server";
-import dbConnect from "@/lib/Mongodb";
-import Application from "@/models/Myapplication";
-import Viewdelete from "@/models/Viewdelete";
-export async function GET() {
+import { MongoClient, ServerApiVersion } from 'mongodb';
+import { NextResponse } from 'next/server';
+
+const uri = process.env.MONGODB_URI!;
+const dbName = 'APPLICATION'; // Make sure this is correct
+const collectionName = 'combinedform'; // Make sure this is correct
+
+async function connectDB() {
   try {
-    await dbConnect();
-    // Get total applications count
-    const totalApplications = await Application.countDocuments();
-    // Get applications by status
-    const pendingApplications = await Application.countDocuments({ status: "pending" });
-    const acceptedApplications = await Application.countDocuments({ status: "accepted" });
-    const rejectedApplications = await Application.countDocuments({ status: "rejected" });
-    // Get total users/applicants count
-    const totalUsers = await Viewdelete.countDocuments({ role: "applicant" });
-    // Calculate completion rate
-    const completionRate = totalApplications > 0 
-      ? ((acceptedApplications + rejectedApplications) / totalApplications * 100).toFixed(2)
-      : 0;
-    const dashboardStats = {
-      totalApplications,
-      pendingApplications,
-      acceptedApplications,
-      rejectedApplications,
-      totalUsers,
-      completionRate
-    };
-    return NextResponse.json(dashboardStats, { status: 200 });
+    const client = new MongoClient(uri, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      },
+    });
+    await client.connect();
+    return client.db(dbName).collection(collectionName);
   } catch (error) {
-    console.error("Error fetching dashboard statistics:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch dashboard statistics" },
-      { status: 500 }
-    );
+    console.error("Failed to connect to MongoDB", error);
+    throw error;
   }
 }
+
+// This is the important part - the GET handler
+export async function GET() {
+  try {
+    const projectsCollection = await connectDB();
+    const projects = await projectsCollection.find({}).toArray();
+    return NextResponse.json(projects);
+  } catch (error: any) {
+    console.error("Error fetching projects", error);
+    return NextResponse.json({ message: "Failed to fetch projects", error: error.message }, { status: 500 });
+  }
+}
+
+// You might have other handlers here (e.g., POST, DELETE for the base URL - which is generally not the pattern for deleting a specific resource)

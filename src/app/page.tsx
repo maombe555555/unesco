@@ -33,10 +33,10 @@ export default function Home() {
                 </div>
         <div className="space-x-4">
           <Link href="/" className="hover:text-blue">Home</Link>
-          <Link href="/about" className="hover:text-blue">About</Link>
-          <Link href="/contact" className="hover:text-blue">Contact</Link>
-          <Link href="/vision" className="hover:text-blue">Vision</Link>
-          <Link href="/mission" className="hover:text-blue">Mission</Link>
+          <Link href="/components/landingpage/about" className="hover:text-blue">About</Link>
+          <Link href="/landingpage/contact" className="hover:text-blue">Contact</Link>
+          <Link href="/landingpage/vision" className="hover:text-blue">Vision</Link>
+          <Link href="/landingpage/mission" className="hover:text-blue">Mission</Link>
         </div>
       </div>
     </nav>
@@ -103,7 +103,7 @@ export default function Home() {
 
         {/* Start Button */}
         <div className="mt-2 flex justify -end">
-          <Link href="/applicants/login">
+          <Link href="/login">
             <button className="bg-blue-500 text-white font-bold py-2 px-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-100 mb-4 flex justify -end">
               GET STARTED
             </button>
