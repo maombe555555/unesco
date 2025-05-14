@@ -34,8 +34,8 @@ export const ADMIN_NAVIGATION = [
     emoji: "⚙️",
   },
   {
-    name: "sheet",
-    href: "/admin/dashboard/sheet",
+    name: "Print",
+    href: "/admin/dashboard/print",
     icon: Bell,
     emoji: "🗂️",
   },
