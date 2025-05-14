@@ -24,7 +24,7 @@ export default function AdminDashboard() {
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <AdminCard
           title="Manage Applicants"
-          href="/admin/Dashboard/application"
+          href="/admin/dashboard/users"
           icon={<Users className="h-5 w-5 text-primary-foreground" />}
           emoji="📋"
           className="bg-primary hover:bg-primary/90"
@@ -58,8 +58,8 @@ export default function AdminDashboard() {
         />
 
         <AdminCard
-          title="Notifications"
-          href="/admin/Adashboard/Message"
+          title="Messages"
+          href="/admin/dashboard/message"
           icon={<Bell className="h-5 w-5 text-primary-foreground" />}
           emoji="🔔"
           variant="secondary"
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
 
         <AdminCard
           title="Edit Profile"
-          href="/Admin/Adashboard/profile"
+          href="/admin/dashboard/profile"
           icon={<User className="h-5 w-5 text-primary-foreground" />}
           emoji="👤"
           variant="secondary"
