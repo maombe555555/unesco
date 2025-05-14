@@ -14,118 +14,183 @@ export default function Home() {
 
   const [index, setIndex] = useState(0);
 
+  // Automatically cycle through messages every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % messages.length);
-    }, 5000); // Change text every 5seconds
+    }, 5000);
     return () => clearInterval(interval);
   }, [messages.length]);
 
-  const images = 
-    ["/7.jpg", "/3.png", "/abou.webp"];
-  
+  const images = ['/7.jpg', '/3.png', '/image.png'];
+  const [isHovered, setIsHovered] = useState<null | 'proposal' | 'eligibility'>(null);
+
   return (
-    <div className="font-sans antialiased min-h-screen bg-gray-100">
-    <nav className="bg-gray-900 bg-opacity-90 p-4">
-      <div className="max-w-6xl mx-auto flex justify-between items-center text-white">
-         <div className="ml-0">
-                  <Image src="/LOG.jpg" alt="UNESCO Logo" width={50} height={70} />
-                </div>
-        <div className="space-x-4">
-          <Link href="/" className="hover:text-blue">Home</Link>
-          <Link href="/components/landingpage/about" className="hover:text-blue">About</Link>
-          <Link href="/landingpage/contact" className="hover:text-blue">Contact</Link>
-          <Link href="/landingpage/vision" className="hover:text-blue">Vision</Link>
-          <Link href="/landingpage/mission" className="hover:text-blue">Mission</Link>
+    <div className="font-sans antialiased min-h-screen bg-gray-100 flex flex-col">
+      {/* Navigation Bar */}
+      <nav className="bg-gray-900 bg-opacity-90 p-2">
+        <div className="max-w-6xl mx-auto flex justify-between items-center text-white">
+          <div>
+            <Image src="/unesco-logo.jpg" alt="UNESCO Logo" width={50} height={70} />
+          </div>
+          <div className="space-x-3">
+            <Link href="/" className="hover:text-blue-400 transition duration-200">
+              Home
+            </Link>
+            <Link href="/about" className="hover:text-blue-400 transition duration-200">
+              About
+            </Link>
+            <Link href="/contact" className="hover:text-blue-400 transition duration-200">
+              Contact
+            </Link>
+          </div>
         </div>
-      </div>
-    </nav>
-    
-    
+      </nav>
+
+      {/* Hero Section */}
+      <header className="bg-blue-900 text-white ">
+        <div className="container mx-auto text-center">
+          <h3 className="text-5xl font-bold mb-6">UNESCO-CNRU</h3>
+          <p className="mt-4 text-xl leading-relaxed">
+           Promoting Global Education, Cultural Preservation and Sustainability.
+          </p>
+          <div className="mt-2 flex justify-end">
+  <Link href="/login" className="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-2 rounded-xl shadow-xl transition duration-100 transform hover:scale-105">
+    Apply Now
+  </Link>
+</div>
+
+        </div>
+      </header>
 
       {/* Main Content Section */}
-      <main className="flex-grow flex flex-col justify-center items-center text-center ">
+      <main className="flex-grow flex flex-col justify-center items-center text-center px-4 py-8">
         {/* Image Slider */}
-        <div className="flex justify-center w-full mt-0 overflow-hidden">
+        <div className="w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-xl">
           <motion.div
             className="flex"
-            animate={{ x: [50, 0] }} // Slide from right (300px) to center (0px)
-            transition={{
-              repeat: Infinity,
-              duration: 5, // Time for each image to transition
-              ease: 'easeInOut',
-              times: [0, 1], // Each image starts and ends at its center
-            }}
+            animate={{ x: `-${index * 100}%` }}
+            transition={{ duration: 0.8, ease: 'easeInOut' }}
           >
             {images.map((image, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ x: 100 }} // Starts from the right side of the screen
-                animate={{ x: 0 }} // Moves to the center of the div
-                transition={{
-                  delay: idx * 5, // Delay increases for each image (5s between each)
-                  duration: 1.5,
-                  ease: 'easeInOut',
-                }}
-               className="flex items-center justify-center space-x-2 bg-white p-2 rounded-lg shadow-lg">
-       
-        <Image
-          key={idx}
-          src={image}
-          alt={`Image ${idx + 1}`}
-          width={100}
-          height={0}
-          className="rounded-2xl shadow-md w-[30vw] h-auto"
-        />
-    
-    
-              </motion.div>
+              <div key={idx} className="w-full flex-shrink-0">
+                <Image
+                  src={image}
+                  alt={`UNESCO Initiative ${idx + 1}`}
+                  width={10000}
+                  height={50}
+                  className="object-cover w-full h-95"
+                  style={{ borderRadius: '0.5rem' }}
+                />
+              </div>
             ))}
           </motion.div>
+          {/* Image Slider Navigation */}
+          <div className="relative w-full">
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`w-3 h-3 rounded-full ${index === idx ? 'bg-blue-500' : 'bg-gray-300 hover:bg-gray-400'}`}
+                  onClick={() => setIndex(idx)}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Sliding Text Animation */}
-        <motion.h1
+        <motion.h2
           key={index}
-          initial={{ opacity: 0, x: -80 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20}}
-          transition={{ duration: 1 }}
-          className="text-2xl font-bold text-blue-600 mt-2 sm:text-2xl "
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.6 }}
+          className="text-3xl font-semibold text-blue-700 mt-10"
         >
           {messages[index]}
-        </motion.h1>
+        </motion.h2>
 
-        {/* Description */}
-        <p className=" text-gray-700 mt-2 leading-relaxed sm:text-lg md:text-xl">
-        Welcome! This is your chance to make a real difference and contribute to a sustainable future. Join a community of innovators and inspire change. Your vision has the power to create meaningful impact!
+        {/* Brief Introduction */}
+        <p className="text-gray-700 mt-6 leading-relaxed ">
+          Welcome to a future driven by innovation and sustainability. Your ideas hold the power to create lasting change. Join a dynamic community of thinkers, creators,
+          and Leaders. Together, we build a more responsible and impactful world.
+          Every vision matters yours can inspire transformation. Collaboration sparks solutions for global Challenges. Sustainability is not just a goal, it's a movement.
+          Empower others while shaping a better tomorrow. Your contribution is the key to meaningful progress. Let's turn ideas into action and make a difference!
         </p>
 
-        {/* Start Button */}
-        <div className="mt-2 flex justify -end">
-          <Link href="/login">
-            <button className="bg-blue-500 text-white font-bold py-2 px-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-100 mb-4 flex justify -end">
-              GET STARTED
-            </button>
-          </Link>
+        {/* Horizontal Interactive Buttons for Applicants */}
+        <div className="mt-12 flex flex-row space-x-6 w-full max-w-3xl mx-auto">
+          <div
+            className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300 flex-1"
+            onMouseEnter={() => setIsHovered('proposal')}
+            onMouseLeave={() => setIsHovered(null)}
+          >
+            <h3 className="text-xl font-semibold text-green-600 mb-4">Project Proposal</h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Have a groundbreaking idea? Learn how to submit your project proposal and potentially receive UNESCO support.
+            </p>
+            <Link href="/login" className="inline-block w-full">
+              <button
+                className={`bg-green-500 text-white font-bold py-3 px-6 rounded-md shadow-sm hover:bg-green-600 transition duration-200 w-full text-center text-sm ${
+                  isHovered === 'proposal' ? 'transform scale-105' : ''
+                }`}
+              >
+                Submit Proposal
+              </button>
+            </Link>
+          </div>
+
+          <div
+            className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition duration-300 flex-1"
+            onMouseEnter={() => setIsHovered('eligibility')}
+            onMouseLeave={() => setIsHovered(null)}
+          >
+            <h3 className="text-xl font-semibold text-yellow-600 mb-4">Eligibility & Guidelines</h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Understand the criteria and guidelines for applying to the UNESCO Participation Programme. Ensure your project meets the requirements.
+            </p>
+            <Link href="/eligibility" className="inline-block w-full">
+              <button
+                className={`bg-yellow-500 text-gray-800 font-bold py-3 px-6 rounded-md shadow-sm hover:bg-yellow-600 transition duration-200 w-full text-center text-sm ${
+                  isHovered === 'eligibility' ? 'transform scale-105' : ''
+                }`}
+              >
+                Learn More
+              </button>
+            </Link>
+          </div>
         </div>
       </main>
 
-      <footer className="bg-gray-900 text-white py-6">
-        <div className="w-full max-w-screen-xl mx-auto text-center px-6">
-          <p>&copy; 2025 UNESCO CNRU. All Rights Reserved.</p>
-          {/* Vision Link */}
-          <div className="mt-4">
-            <p className="text-sm">
-              <a
-                href="https://www.unesco.org/en/vision"
-                target="_blank"
-                className="text-blue-400 hover:text-blue-600"
-              >
-                Learn more about the Vision of UNESCO CNRU
-              </a>
-            </p>
+
+      {/* Footer Section */}
+      <footer className="bg-gray-900 text-white py-2">
+        <div className="container max-w-screen-xl mx-auto text-center px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+            <div>
+              <Image src="/unesco-logo.jpg" alt="UNESCO CNRU Footer Logo" width={60} height={80} />
+              <h2 className="text-sm font-bold">UNESCO-CNRU</h2>
+              <p className="text-sm">Rwanda National Commission for UNESCO</p>
+            </div>
+            <div className="mt-4 md:mt-0">
+              <ul className="flex space-x-4">
+                <li>
+                  <Link href="/privacy" className="hover:text-blue-400 transition duration-200">Privacy Policy</Link>
+                </li>
+                <li>
+                  <Link href="/Services" className="hover:text-blue-400 transition duration-200">Terms of Service</Link>
+                </li>
+                <li>
+                  <Link href="/FAQ" className="hover:text-blue-400 transition duration-200">FAQ</Link>
+                </li>
+              </ul>
+            </div>
           </div>
+          <p className="text-sm ">&copy; {new Date().getFullYear()} UNESCO CNRU. All Rights Reserved.</p>
+          <p className="text-xs">
+            Empowering Minds, Preserving Heritage, Building a Sustainable Future.
+          </p>
         </div>
       </footer>
     </div>

@@ -1,128 +1,98 @@
+"use client"
 
-'use client';
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import Link from "next/link"
+import { Bell, FileText, FilePlus, User } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { DashboardCard } from "@/components/dashboard-card"
+
 export default function ApplicantDashboard() {
-  const pathname = usePathname();
-  
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
-      {/* Navigation Bar */}
-      <nav className="bg-gray-900 bg-opacity-90 p-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center text-white">
-          <div className="ml-0">
-            <Image src="/LOG.jpg" alt="UNESCO Logo" width={50} height={70} />
-          </div>
-          <div className="space-x-4">
-            <Link
-              href="/"
-              className={pathname === '/' ? 'text-blue-500 font-bold underline' : 'hover:text-blue'}
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className={pathname === '/about' ? 'text-blue-500 font-bold underline' : 'hover:text-blue'}
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className={pathname === '/contact' ? 'text-blue-500 font-bold underline' : 'hover:text-blue'}
-            >
-              Contact
-            </Link>
-            <Link
-              href="/vision"
-              className={pathname === '/vision' ? 'text-blue-500 font-bold underline' : 'hover:text-blue'}
-            >
-              Vision
-            </Link>
-            <Link
-              href="/mission"
-              className={pathname === '/mission' ? 'text-blue-500 font-bold underline' : 'hover:text-blue'}
-            >
-              Mission
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-background">
+
+
+      <div className="flex">
+
+
+        <main className="flex-1 p-6">
+          <div className="flex items-center justify-between md:hidden">
+            <h1 className="text-2xl font-bold">Dashboard</h1>
       
-      <div className="flex flex-1 mt-8 gap-4 p-6">
-        {/* Sidebar Navigation */}
-        <aside className="w-full md:w-64 bg-gray-800 text-white p-6 rounded-lg shadow-md">
-          <h3 className="text-2xl font-bold mb-4">Dashboard</h3>
-          <nav className="space-y-4">
-            <Link href="/applicants/dashboard" className="block hover:text-gray-400">Home</Link>
-            <Link href="/applicants/dashboard/Myapplication" className="block hover:text-gray-400">My Applications</Link>
-            <Link href="/applicants/dashboard/process" className="block hover:text-gray-400">New Application</Link>
-            <Link href="/applicants/ dashboard/Profile" className="block hover:text-gray-400">Edit Profile</Link>
-            <Link href="/" className="block hover:text-gray-400">Logout</Link>
-          </nav>
-        </aside>
-        
-        {/* Main Content */}
-        <main className="flex-1 bg-white p-6 rounded-lg shadow-md">
-          {/* New Application Section */}
-          <section>
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold mb-4 text-gray-800">My Applications</h2>
-              <Link 
-                href="/applicants/dashboard/process" 
-                className="bg-blue-500 text-white font-medium py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300"
-              >
-                Create New Application
-              </Link>
-            </div>
-           
-          </section>
-          
-          {/* Notification Settings */}
-          <section className="mt-8">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Notifications</h2>
-            <p className="text-gray-700">
-              Receive all updates about your application status via email.
+          </div>
+
+          <div className="mt-6">
+            <h2 className="text-3xl font-bold tracking-tight">Welcome back!</h2>
+            <p className="mt-2 text-muted-foreground">
+              Here's an overview of your application status and recent activities.
             </p>
-            <button className="bg-blue-500 text-white font-medium py-2 px-4 mt-2 rounded shadow hover:bg-blue-700 transition duration-300">
-              Enable Email Notifications
-            </button>
-          </section>
-          
-          {/* Edit Profile Section */}
-          <section className="mt-8">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Edit Profile</h2>
-            <p className="text-gray-700 mb-2">
-              Update your details like contact information and password.
-            </p>
-            <Link 
-              href="/applicant/profile" 
-              className="bg-green-500 text-white font-medium py-2 px-4 rounded shadow hover:bg-green-700 transition duration-300"
+          </div>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <DashboardCard
+              title="My Applications"
+              description="Track your submitted applications"
+              icon={<FileText className="h-5 w-5 text-primary" />}
             >
-              Edit Profile
-            </Link>
-          </section>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-2xl font-bold">3</span>
+                <Link href="/applicants/dashboard/application">
+                  <Button variant="outline" size="sm">
+                    View All
+                  </Button>
+                </Link>
+              </div>
+            </DashboardCard>
+
+            <DashboardCard
+              title="New Application"
+              description="Start a new application process"
+              icon={<FilePlus className="h-5 w-5 text-primary" />}
+            >
+              <Link href="/applicants/dashboard/new-application">
+                <Button className="mt-2 w-full">Create New Application</Button>
+              </Link>
+            </DashboardCard>
+
+            <DashboardCard
+              title="Profile"
+              description="Update your personal information"
+              icon={<User className="h-5 w-5 text-primary" />}
+            >
+              <Link href="/applicants/dashboard/Profile">
+                <Button variant="outline" className="mt-2 w-full">
+                  Edit Profile
+                </Button>
+              </Link>
+            </DashboardCard>
+          </div>
+
+          <div className="mt-8">
+            <DashboardCard
+              title="Notifications"
+              description="Receive all updates about your application status via email"
+              icon={<Bell className="h-5 w-5 text-primary" />}
+            >
+      
+            </DashboardCard>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-xl font-bold">Recent Activity</h2>
+            <div className="mt-4 rounded-lg border">
+              <div className="divide-y">
+                {[1, 2, 3].map((item) => (
+                  <div key={item} className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium">Application #{item} updated</p>
+                      <p className="text-sm text-muted-foreground">Status changed to "Under Review"</p>
+                    </div>
+                    <p className="text-sm text-muted-foreground">2 days ago</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </main>
       </div>
-      
-      <footer className="bg-gray-900 text-white py-6">
-        <div className="w-full max-w-screen-xl mx-auto text-center px-6">
-          <p>&copy; 2025 UNESCO CNRU. All Rights Reserved.</p>
-          {/* Vision Link */}
-          <div className="mt-4">
-            <p className="text-sm">
-              <a
-                href="https://www.unesco.org/en/vision"
-                target="_blank"
-                className="text-blue-400 hover:text-blue-600"
-              >
-                Learn more about the Vision of UNESCO CNRU
-              </a>
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
-  );
+  )
 }

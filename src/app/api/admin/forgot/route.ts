@@ -1,38 +1,48 @@
-import express, { Request, Response } from 'express';
-const nodemailer = require('nodemailer');
-const User = require('../models/User');
-const router = express.Router();
-// POST /api/forgot-password
-router.post('/forgot-password', async (req: Request, res: Response) => {
+import type { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '@/lib/Mongodb';
+import User from '@/models/User'; // Assuming you have a User model
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+
+const transporter = nodemailer.createTransport({
+  service: 'Gmail', // Use your email service or SMTP server
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
   const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
   try {
+    await dbConnect(); // Connect to your database
     // Check if the user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
     // Generate a password reset token
-    const resetToken = user.generateResetToken();
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // Token valid for 1 hour
     await user.save();
-    // Send email with reset link
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'your-email@gmail.com',
-        pass: 'your-email-password',
-      },
-    });
+    // Send email with the password reset link
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
     const mailOptions = {
-      from: 'your-email@gmail.com',
-      to: email,
+      to: user.email,
       subject: 'Password Reset',
-      text: `To reset your password, click the link: http://forgot-password/reset-password/${resetToken}`,
+      html: `<p>You requested a password reset. Click the link below to reset your password:</p>
+             <p><a href="${resetUrl}">Reset Password</a></p>`,
     };
     await transporter.sendMail(mailOptions);
-    res.json({ message: 'Password reset email sent' });
+    res.status(200).json({ message: 'Password reset link sent to your email address' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error sending password reset link' });
   }
-});
-module.exports = router;
+}

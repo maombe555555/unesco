@@ -20,12 +20,6 @@ function Navbar() {
             <Link href="/contact" className="hover:underline">
               Contact
             </Link>
-            <Link href="/vision" className="hover:underline">
-              Vision
-            </Link>
-            <Link href="/mission" className="hover:underline">
-              Mission
-            </Link>
           </div>
         </div>
       </nav>

@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {useState, useEffect} from 'react'
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import DefaultLayout from "@/components/layouts/DefaultLayout";
 import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -40,7 +40,7 @@ export default function Register() {
         setSuccess(null)
 
         try {
-            const registerPromise = fetch("/api/register", {
+            const registerPromise = fetch("/api/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -84,16 +84,32 @@ export default function Register() {
     , [pathname, router])
 
     return (
-        <DefaultLayout>
+
             <div className="flex flex-col items-center justify-center min-h-screen py-2">
-                <h1 className="text-3xl font-bold mb-4">Register</h1>
-                <form
+                 <div className="flex justify-center mb-2 ">
+                          <div className="bg-[#0077D4] rounded-full">
+                            <Image
+                              src="/unesco-logo.jpg"
+                              alt="UNESCO Logo"
+                              width={40}
+                              height={40}
+                              className="text-white w-18 h-14"
+                            />
+                          </div>
+                        </div>
+              
+
+            
+               
+                    <form
                     onSubmit={handleSubmit(handleRegister)}
-                    className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md"
+                    className="w-centre max-w-sm bg-grey-200 p-3 rounded-lg shadow-md  border-blue-200 "
                 >
                     {error && <p className="text-red-500 text-xs">{error}</p>}
                     {success && <p className="text-green-500">{success}</p>}
+                      <h1 className="text-3xl font-bold mb-4 text-blue-500 ">Register new account </h1>
                     <div className="mb-4">
+
                         <label htmlFor="names" className="block text-gray-700 mb-2">
                             Names
                         </label>
@@ -203,8 +219,11 @@ export default function Register() {
                         </Link>
                     </p>
                 </form>
+            
+                 <div className="mt-6 text-center text-sm text-gray-500">
+          <p>© {new Date().getFullYear()} UNESCO Participation Programme. All rights reserved.</p>
+        </div>
             </div>
-        </DefaultLayout>
     )
 }
 

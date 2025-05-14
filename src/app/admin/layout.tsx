@@ -1,28 +1,50 @@
-import React from 'react'
+import type { ReactNode } from "react"
+import { redirect } from "next/navigation"
+import { getSession } from "@/lib/utils/sessionutil"
+import { AdminHeader } from "@/components/admin/admin-header"
+import { AdminSidebar } from "@/components/admin/admin-sidebar"
+import { AdminMobileSidebar } from "@/components/admin/admin-mobile-sidebar"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { decrypt, deleteSession } from '@/lib/utils/sessionutil'
-import { cookies } from 'next/headers'
-import Dashboard from './page'
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  // Server-side authentication check using the session utility
+  const session = await getSession()
 
-async function AdminLayout() {
-    const cookieStore = cookies()
-    const token = (await cookieStore).get('session')?.value
-    const payload = await decrypt(token!)
-    const role = payload?.role
-    const isAdmin = role === 'admin'
+  if (!session) {
+    redirect("/login")
+  }
 
-
-    if (!isAdmin){
-        // await deleteSession()
-        // window.location.href = '/login'
-        return null
+  // Check if user has admin role
+  if (session.role !== "admin") {
+    // If not admin but has applicant role, redirect to applicant dashboard
+    if (session.role === "applicant") {
+      redirect("/applicants/dashboard")
+    } else {
+      // If neither admin nor applicant, redirect to login
+      redirect("/login")
     }
+  }
 
   return (
-    <>
-    <Dashboard />
-    </>
+    <div className="flex h-screen flex-col">
+      <AdminHeader />
+
+      <div className="flex flex-1 overflow-hidden">
+        <AdminSidebar />
+
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-[calc(100vh-4rem)]">
+            <main className="flex-1 p-6">
+              <div className="flex items-center justify-between md:hidden">
+                <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+                <AdminMobileSidebar />
+              </div>
+
+              {children}
+            </main>
+          </ScrollArea>
+        </div>
+      </div>
+    </div>
   )
 }
-
-export default AdminLayout

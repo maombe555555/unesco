@@ -1,140 +1,196 @@
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import DefaultLayout from '@/components/layouts/DefaultLayout';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { loginSchema } from '@/lib/validations/auth';
-import { z } from 'zod';
-import toast from 'react-hot-toast';
-import { usePathname } from 'next/navigation';
+import { useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { loginSchema } from "@/lib/validations/auth"
+import type { z } from "zod"
+import toast from "react-hot-toast"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/UI/checkbox"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
-type LoginFormInputs = z.infer<typeof loginSchema>;
+type LoginFormInputs = z.infer<typeof loginSchema>
 
 export default function Login() {
-    const router = useRouter();
-    const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginFormInputs>({
-        resolver: zodResolver(loginSchema),
-    });
-    const handleLogin = async (data: LoginFormInputs) => {
-        setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
 
-        const loginPromise = toast.promise(
-            (async () => {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+  const handleLogin = async (data: LoginFormInputs) => {
+    setError(null)
+    setIsLoading(true)
 
-                if (!response.ok) {
-                    const responseData = await response.json();
-                    throw new Error(responseData.message || 'Login failed');
-                }
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          rememberMe,
+        }),
+      })
 
-                const responseData = await response.json();
-                const { role } = responseData.session;
+      const responseData = await response.json()
 
-                // Redirect based on role
-                if (role === 'admin') {
-                    router.push('/admin');
-                } else {
-                    router.push('/applicants/dashboard');
-                }
-            })(),
-            {
-                loading: 'Logging in...',
-                success: 'Login successful!',
-                error: (err) => err.message || 'An error occurred during login',
-            }
-        );
+      if (!response.ok) {
+        throw new Error(responseData.message || "Login failed")
+      }
 
-        try {
-            await loginPromise;
-        } catch (error: any) {
-            setError(error.message || 'An error occurred during login');
-        }
-    };
+      toast.success("Login successful!")
 
-    return (
-        <DefaultLayout>
-            <div
-                className="h-screen w-full"
-                style={{
-                    backgroundImage: "url('/image.png')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                }}
-            >
-                {/* Login Box */}
-                <form
-                    onSubmit={handleSubmit(handleLogin)}
-                    className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-3xl shadow-lg"
+      const { role } = responseData.session
+
+      // Redirect based on role
+      if (role === "admin") {
+        router.push("/admin")
+      } else {
+        router.push("/applicants/dashboard")
+      }
+    } catch (error: any) {
+      setError(error.message || "An error occurred during login")
+      toast.error(error.message || "Login failed")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+      <div className="w-full max-w-md">
+        {/* UNESCO Logo */}
+        <div className="flex justify-center mb-2 ">
+          <div className="bg-[#0077D4] rounded-full">
+            <Image
+              src="/unesco-logo.jpg"
+              alt="UNESCO Logo"
+              width={40}
+              height={40}
+              className="text-white w-18 h-14"
+            />
+          </div>
+        </div>
+
+        <Card className="border-blue-100 shadow-lg">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center text-[#0077D4]">
+              UNESCO Participation Programme
+            </CardTitle>
+            <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
+          </CardHeader>
+
+          <form onSubmit={handleSubmit(handleLogin)}>
+            <CardContent className="space-y-4">
+              {error && (
+                <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm border border-red-200">{error}</div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  {...register("email")}
+                  className={errors.email ? "border-red-500" : ""}
+                />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link href="/forgot-password" className="text-sm font-medium text-[#0077D4] hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...register("password")}
+                    className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                />
+                <label
+                  htmlFor="remember"
+                  className="text-sm  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                    <h1 className="text-center text-xl font-bold">LOGIN</h1>
-                    <div className="bg-white p-6 rounded-lg shadow-md mt-4">
-                        <h2 className="text-center text-lg font-semibold mb-4">LOGIN INTO ACCOUNT</h2>
-                        {error && (
-                            <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
-                                <p>{error}</p>
-                            </div>
-                        )}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
-                            <input
-                                type="email"
-                                {...register('email')}
-                                className="w-full mt-1 p-2 border border-gray-300 rounded"
-                                placeholder="you@example.com"
-                            />
-                            {errors.email && (
-                                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700">Password</label>
-                            <input
-                                type="password"
-                                {...register('password')}
-                                className="w-full mt-1 p-2 border border-gray-300 rounded"
-                                placeholder="••••••••"
-                            />
-                            {errors.password && (
-                                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-                            )}
-                        </div>
-                        <div className="flex flex-col space-y-3">
-                            <button
-                                type="submit"
-                                className="bg-blue-600 text-white text-center p-2 rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Login
-                            </button>
-                            <button type="button" className="text-blue-600 hover:underline">
-                                Forgot Password?
-                            </button>
-                        </div>
-                        <p className="mt-4 text-center">
-                            Don&apos;t have an account?{' '}
-                            <Link href="/register" className="text-blue-600 hover:underline">
-                                Create New Account
-                            </Link>
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </DefaultLayout>
-    );
+                  Remember me
+                </label>
+              </div>
+            </CardContent>
+
+            <CardFooter className="flex flex-col mt-4 space-y-4">
+              <Button type="submit" className="w-full bg-[#0077D4] hover:bg-[#005ea6]" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...
+                  </>
+                ) : (
+                  "Sign in"
+                )}
+              </Button>
+
+              <div className="text-center text-sm">
+                Don't have an account?{" "}
+                <Link href="/register" className="font-medium text-[#0077D4] hover:underline">
+                  Create an account
+                </Link>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
+
+        <div className="mt-6 text-center text-sm text-gray-500">
+          <p>© {new Date().getFullYear()} UNESCO Participation Programme. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  )
 }
