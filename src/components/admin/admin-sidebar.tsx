@@ -29,7 +29,7 @@ export function AdminSidebar() {
     }
 
   return (
-    <aside className="hidden h-[calc(100vh-4rem)] w-fit flex-shrink-0 flex-col border-r bg-gray-200 p-6 md:flex">
+    <aside className="hidden h-[calc(100vh-4rem)] w-fit flex-shrink-0 flex-col border-r bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100 p-6 md:flex">
    
       <nav className="flex-1 space-y-1 overflow-y-auto">
         {ADMIN_NAVIGATION.map((item) => {
@@ -54,7 +54,9 @@ export function AdminSidebar() {
 
       <div className="mt-auto pt-4 border-t">
         {ADMIN_FOOTER_NAVIGATION.map((item) => (
-          <Button variant={"ghost"}
+          <Button
+            key={item.name}
+            variant={"ghost"}
             onClick={handleLogout}
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-200 transition-colors"
           >

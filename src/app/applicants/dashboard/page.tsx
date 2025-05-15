@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Bell, FileText, FilePlus, User } from "lucide-react"
+import { FileText, FilePlus, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DashboardCard } from "@/components/dashboard-card"
 
@@ -20,9 +20,9 @@ export default function ApplicantDashboard() {
           </div>
 
           <div className="mt-6">
-            <h2 className="text-3xl font-bold tracking-tight">Welcome back!</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Welcome back! </h2>
             <p className="mt-2 text-muted-foreground">
-              Here's an overview of your application status and recent activities.
+              Here&apos;s an overview of your application status and recent activities.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export default function ApplicantDashboard() {
               description="Update your personal information"
               icon={<User className="h-5 w-5 text-primary" />}
             >
-              <Link href="/applicants/dashboard/Profile">
+              <Link href="/applicants/dashboard/settings">
                 <Button variant="outline" className="mt-2 w-full">
                   Edit Profile
                 </Button>
@@ -65,32 +65,7 @@ export default function ApplicantDashboard() {
             </DashboardCard>
           </div>
 
-          <div className="mt-8">
-            <DashboardCard
-              title="Notifications"
-              description="Receive all updates about your application status via email"
-              icon={<Bell className="h-5 w-5 text-primary" />}
-            >
-      
-            </DashboardCard>
-          </div>
-
-          <div className="mt-8">
-            <h2 className="text-xl font-bold">Recent Activity</h2>
-            <div className="mt-4 rounded-lg border">
-              <div className="divide-y">
-                {[1, 2, 3].map((item) => (
-                  <div key={item} className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium">Application #{item} updated</p>
-                      <p className="text-sm text-muted-foreground">Status changed to "Under Review"</p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">2 days ago</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        
         </main>
       </div>
     </div>

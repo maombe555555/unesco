@@ -1,4 +1,4 @@
-import { Home, FileText, FilePlus, User, LogOut } from "lucide-react"
+import { Home, FileText, FilePlus, Settings, LogOut } from "lucide-react"
 
 export const DASHBOARD_NAVIGATION = [
   {
@@ -17,9 +17,9 @@ export const DASHBOARD_NAVIGATION = [
     icon: FilePlus,
   },
   {
-    name: "Profile",
-    href: "/applicants/dashboard/profile",
-    icon: User,
+    name: "Settings",
+    href: "/applicants/dashboard/settings",
+    icon: Settings,
   },
   
 ]

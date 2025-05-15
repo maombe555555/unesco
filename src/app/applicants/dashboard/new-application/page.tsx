@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-"use client"; // Indicate that this is a client component
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+"use client";
+
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { toast } from "react-hot-toast";
+
 import data from "./data.json"; // Ensure your data.json file is in the same directory
 const Page: React.FC = () => {
   // STEP STATE
@@ -150,7 +155,7 @@ const Page: React.FC = () => {
       if (budgetData.totalCost <= 0) {
         throw new Error("Total cost must be greater than 0");
       }
-      const response = await fetch("/api/applicants", {
+      const response = await fetch("/api/application", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -194,7 +199,9 @@ const Page: React.FC = () => {
         );
       }
       await response.json();
-      alert("Budget form submitted successfully!");
+      toast.success("Application submitted successfully!");
+      console.log("Application submitted successfully!", response);
+
       // Reset form fields and file input
       setBudgetData({
         category1Explanation: "",
@@ -215,7 +222,7 @@ const Page: React.FC = () => {
       setSelectedMoreInfoFile(null);
     } catch (error: any) {
       console.error("Error submitting budget form:", error);
-      alert(
+      toast.error(
         error.message ||
           "An error occurred while submitting the form. Please try again."
       );

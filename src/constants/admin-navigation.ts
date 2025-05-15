@@ -1,4 +1,4 @@
-import { Users, Home, FolderKanban, Calculator, Settings, Bell, User, LogOut, FileInput, UserCog } from "lucide-react"
+import {  Home,  Calculator, Settings, Bell,  LogOut, FileInput, UserCog } from "lucide-react"
 
 export const ADMIN_NAVIGATION = [
   {
@@ -28,7 +28,7 @@ export const ADMIN_NAVIGATION = [
     emoji: "🧮",
   },
   {
-    name: "Settings",
+    name: "Project Settings",
     href: "/admin/dashboard/setting",
     icon: Settings,
     emoji: "⚙️",
@@ -46,9 +46,9 @@ export const ADMIN_NAVIGATION = [
     emoji: "🔔",
   },
   {
-    name: "Profile",
-    href: "/admin/dashboard/profile",
-    icon: User,
+    name: "Settings",
+    href: "/admin/dashboard/settings",
+    icon: Settings,
     emoji: "👤",
   },
 ]

@@ -51,7 +51,7 @@ const FAQPage = () => {
           possible. Depending on the volume of inquiries, there might be a slight
           delay in our response time, but we will do our best to assist you. For
           general information, please also refer to the detailed guidelines and
-          FAQs provided on the project's call for proposals page.
+          FAQs provided on the project&#39;s call for proposals page.
         </>
       ),
       id: "contact",

@@ -50,7 +50,7 @@ export default function AdminDashboard() {
 
         <AdminCard
           title="Settings"
-          href="/admin/dashboard/setting"
+          href="/admin/dashboard/settings"
           icon={<Settings className="h-5 w-5 text-primary-foreground" />}
           emoji="⚙️"
           variant="secondary"
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
 
         <AdminCard
           title="Edit Profile"
-          href="/admin/dashboard/profile"
+          href="/admin/dashboard/settings"
           icon={<User className="h-5 w-5 text-primary-foreground" />}
           emoji="👤"
           variant="secondary"
@@ -76,32 +76,6 @@ export default function AdminDashboard() {
         />
       </div>
 
-      <div className="mt-8 rounded-lg border bg-card p-6 shadow-sm">
-        <h3 className="text-xl font-bold mb-4">Recent Activity</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between border-b pb-4">
-            <div>
-              <p className="font-medium">New applicant registered</p>
-              <p className="text-sm text-muted-foreground">John Doe from Ghana submitted a new application</p>
-            </div>
-            <p className="text-sm text-muted-foreground">2 hours ago</p>
-          </div>
-          <div className="flex items-center justify-between border-b pb-4">
-            <div>
-              <p className="font-medium">Project evaluation completed</p>
-              <p className="text-sm text-muted-foreground">Project #1234 has been evaluated with a score of 85/100</p>
-            </div>
-            <p className="text-sm text-muted-foreground">Yesterday</p>
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">System update scheduled</p>
-              <p className="text-sm text-muted-foreground">Maintenance window planned for next Sunday</p>
-            </div>
-            <p className="text-sm text-muted-foreground">3 days ago</p>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

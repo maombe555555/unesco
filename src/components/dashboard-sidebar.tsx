@@ -30,7 +30,7 @@ export function DashboardSidebar() {
         }
 
   return (
-    <aside className="hidden h-[calc(100vh-4rem)] w-fit flex-shrink-0 flex-col border-r bg-gray-200 p-6 md:flex">
+    <aside className="hidden h-[calc(100vh-4rem)] w-fit flex-shrink-0 flex-col border-r bg-gradient-to-r from-blue-50 to-indigo-50  p-6 md:flex">
 
       <nav className="flex-1 space-y-1">
         {DASHBOARD_NAVIGATION.map((item) => {
@@ -58,7 +58,9 @@ export function DashboardSidebar() {
 
       <div className="mt-auto pt-4 border-t">
         {FOOTER_NAVIGATION.map((item) => (
-           <Button variant={"ghost"}
+           <Button
+            key={item.name}
+            variant={"ghost"}
             onClick={handleLogout}
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-200 transition-colors"
           >

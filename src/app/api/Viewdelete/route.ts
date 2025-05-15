@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { NextResponse } from 'next/server';
 
