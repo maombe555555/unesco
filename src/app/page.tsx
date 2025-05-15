@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -176,7 +177,7 @@ export default function Home() {
             <div className="mt-4 md:mt-0">
               <ul className="flex space-x-4">
                 <li>
-                  <Link href="/privacy" className="hover:text-blue-400 transition duration-200">Privacy Policy</Link>
+                  <Link href="/privancy" className="hover:text-blue-400 transition duration-200">Privacy Policy</Link>
                 </li>
                 <li>
                   <Link href="/Services" className="hover:text-blue-400 transition duration-200">Terms of Service</Link>

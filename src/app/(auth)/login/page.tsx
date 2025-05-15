@@ -1,190 +1,229 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { loginSchema } from "@/lib/validations/auth"
-import type { z } from "zod"
-import toast from "react-hot-toast"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
-
+import { toast } from "react-hot-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/UI/checkbox"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { loginSchema, LoginFormValues } from "@/lib/validations/auth"
 
-type LoginFormInputs = z.infer<typeof loginSchema>
 
 export default function Login() {
   const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
+  const [requiresTwoFactor, setRequiresTwoFactor] = useState(false)
+  const [tempToken, setTempToken] = useState<string | null>(null)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormInputs>({
+  const errorMessage = searchParams.get("error")
+  const successMessage = searchParams.get("success")
+
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
   })
 
-  const handleLogin = async (data: LoginFormInputs) => {
-    setError(null)
-    setIsLoading(true)
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage)
+    }
+    if (successMessage) {
+      toast.success(successMessage)
+    }
+  }, [errorMessage, successMessage])
 
+  async function onSubmit(data: LoginFormValues) {
+    setIsLoading(true)
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...data,
-          rememberMe,
-        }),
+        body: JSON.stringify(data),
       })
 
-      const responseData = await response.json()
+      const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(responseData.message || "Login failed")
+        // Check if the error is due to unverified email
+        if (response.status === 403 && result.code === "EMAIL_NOT_VERIFIED") {
+          toast.error("Please verify your email before logging in")
+          // Store email in session storage for the resend verification page
+          sessionStorage.setItem("pendingVerificationEmail", data.email)
+          router.push("/resend-verification")
+          return
+        }
+
+        toast.error(result.message || "Login failed")
+        setIsLoading(false)
+        return
+      }
+
+      // Check if 2FA is required
+      if (result.requiresTwoFactor) {
+        setRequiresTwoFactor(true)
+        setTempToken(result.tempToken)
+        toast.success("A verification code has been sent to your email")
+        setIsLoading(false)
+        return
       }
 
       toast.success("Login successful!")
 
-      const { role } = responseData.session
-
-      // Redirect based on role
+      // Redirect based on user role
+      const { role } = result.session
       if (role === "admin") {
         router.push("/admin")
       } else {
         router.push("/applicants/dashboard")
       }
-    } catch (error: any) {
-      setError(error.message || "An error occurred during login")
-      toast.error(error.message || "Login failed")
+    } catch (error) {
+      console.error("An error occurred during login", error)
+      toast.error("An error occurred during login")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+  // If 2FA is required, redirect to the verification page
+  useEffect(() => {
+    if (requiresTwoFactor && tempToken) {
+      router.push(`/verify-otp?token=${encodeURIComponent(tempToken)}`)
+    }
+  }, [requiresTwoFactor, tempToken, router])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <div className="w-full max-w-md">
-        {/* UNESCO Logo */}
-        <div className="flex justify-center mb-2 ">
-          <div className="bg-[#0077D4] rounded-full">
+        <div className="mb-6 flex justify-center">
+          <div className="rounded-full bg-[#0077D4] p-2">
             <Image
               src="/unesco-logo.jpg"
               alt="UNESCO Logo"
-              width={40}
-              height={40}
-              className="text-white w-18 h-14"
+              width={50}
+              height={50}
+              className="h-12 w-12 rounded-full object-cover"
             />
           </div>
         </div>
 
         <Card className="border-blue-100 shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-[#0077D4]">
+            <CardTitle className="text-center text-2xl font-bold text-blue-600">
               UNESCO Participation Programme
             </CardTitle>
             <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
           </CardHeader>
+          <CardContent>
+            {errorMessage && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
 
-          <form onSubmit={handleSubmit(handleLogin)}>
-            <CardContent className="space-y-4">
-              {error && (
-                <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm border border-red-200">{error}</div>
-              )}
+            {successMessage && (
+              <Alert className="mb-4 border-green-200 bg-green-50 text-green-800">
+                <AlertDescription>{successMessage}</AlertDescription>
+              </Alert>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  {...register("email")}
-                  className={errors.email ? "border-red-500" : ""}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="john.doe@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link href="/forgot-password" className="text-sm font-medium text-[#0077D4] hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    {...register("password")}
-                    className={errors.password ? "border-red-500 pr-10" : "pr-10"}
-                  />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
-                  </button>
-                </div>
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Password</FormLabel>
+                        <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                          Forgot password?
+                        </Link>
+                      </div>
+                      <FormControl>
+                        <div className="relative">
+                          <Input type={showPassword ? "text" : "password"} placeholder="••••••••" {...field} />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <label
-                  htmlFor="remember"
-                  className="text-sm  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Remember me
-                </label>
-              </div>
-            </CardContent>
 
-            <CardFooter className="flex flex-col mt-4 space-y-4">
-              <Button type="submit" className="w-full bg-[#0077D4] hover:bg-[#005ea6]" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...
-                  </>
-                ) : (
-                  "Sign in"
-                )}
-              </Button>
+                <FormField
+                  control={form.control}
+                  name="rememberMe"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Remember me</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-              <div className="text-center text-sm">
-                Don't have an account?{" "}
-                <Link href="/register" className="font-medium text-[#0077D4] hover:underline">
-                  Create an account
-                </Link>
-              </div>
-            </CardFooter>
-          </form>
+                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+                Create an account
+              </Link>
+            </div>
+          </CardFooter>
         </Card>
 
         <div className="mt-6 text-center text-sm text-gray-500">

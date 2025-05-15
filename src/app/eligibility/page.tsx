@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"; // Mark the file as a client component
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -70,7 +71,7 @@ const Eligibility = () => {
         <Link href="/" className="border border-gray-300 rounded px-4 py-2 text-gray-700 hover:bg-gray-100">
           Back to Home
         </Link>
-        <Link href="/setting" className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700">
+        <Link href="/settings" className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700">
         deadline
         </Link>
       </div>

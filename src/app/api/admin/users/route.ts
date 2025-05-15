@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { type NextRequest, NextResponse } from "next/server"
 import User from "@/models/User"
 import { forbidden } from "next/navigation"
 
 // Import the session utility at the top of the file
 import { getSession } from "@/lib/utils/sessionutil"
+import dbConnect from "@/lib/Mongodb"
 
 // Function to verify if the current user is an admin
 async function verifyAdminAccess(req: NextRequest) {
@@ -22,12 +25,12 @@ async function verifyAdminAccess(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     await verifyAdminAccess(req)
-    await connectDB()
+    await dbConnect()
 
     const users = await User.find({}).sort({ createdAt: -1 }).lean()
 
     // Convert MongoDB documents to plain objects and ensure _id is properly serialized
-    const serializedUsers = users.map((user) => ({
+    const serializedUsers = users.map((user: any) => ({
       ...user,
       _id: user._id.toString(),
       createdAt: user.createdAt.toISOString(),
@@ -44,7 +47,7 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     await verifyAdminAccess(req)
-    await connectDB()
+    await dbConnect()
 
     const data = await req.json()
     const { userId, userData } = data
@@ -69,7 +72,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     await verifyAdminAccess(req)
-    await connectDB()
+    await dbConnect()
 
     const url = new URL(req.url)
     const userId = url.searchParams.get("userId")

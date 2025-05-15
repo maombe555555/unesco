@@ -24,7 +24,7 @@ export async function handleFileUploads(formData: FormData): Promise<UploadedFil
   const files: File[] = []
 
   // Extract files from form data
-  formData.forEach((value, key) => {
+  formData.forEach((value, ) => {
     if (value instanceof File) {
       files.push(value)
     }
