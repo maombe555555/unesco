@@ -1,6 +1,6 @@
+// src\models\User.ts
 import mongoose, { Schema, type Document } from "mongoose"
 
-// Define the User Schema
 const UserSchema: Schema = new Schema(
   {
     names: { type: String, required: true },

@@ -1,3 +1,4 @@
+// src\app\admin\dashboard\users\edit-user-dialog.tsx
 "use client"
 
 import { useState } from "react"
@@ -36,9 +37,10 @@ interface EditUserDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onUserUpdated: (user: IUser) => void
+ 
 }
 
-export default function EditUserDialog({ user, open, onOpenChange, onUserUpdated }: EditUserDialogProps) {
+export default function EditUserDialog({ user, open, onOpenChange, onUserUpdated, }: EditUserDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showRoleWarning, setShowRoleWarning] = useState(false)
   const [pendingValues, setPendingValues] = useState<FormValues | null>(null)
@@ -71,10 +73,14 @@ export default function EditUserDialog({ user, open, onOpenChange, onUserUpdated
     setIsSubmitting(true)
     try {
       const updatedUser = await updateUser({
-        userId: user._id,
+        userId: String(user._id),
         userData: values,
       })
-      onUserUpdated(updatedUser)
+      if (updatedUser && typeof updatedUser === "object" && "names" in updatedUser && "username" in updatedUser && "email" in updatedUser && "phone" in updatedUser) {
+        onUserUpdated(updatedUser as unknown as IUser)
+      } else {
+        console.error("Returned value from updateUser is not a valid IUser object:", updatedUser)
+      }
     } catch (error) {
       console.error("Failed to update user:", error)
     } finally {

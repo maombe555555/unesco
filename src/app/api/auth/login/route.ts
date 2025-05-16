@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import User from "@/models/User"
 import dbConnect from "@/lib/Mongodb"
 import { NextResponse } from "next/server"
@@ -89,8 +90,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error during login:", error)
 
-    if (error.name === "ZodError") {
-      return NextResponse.json({ message: "Invalid form data", errors: error.errors }, { status: 400 })
+    if (error && typeof error === "object" && "name" in error && (error as any).name === "ZodError") {
+      return NextResponse.json({ message: "Invalid form data", errors: (error as any).errors }, { status: 400 })
     }
 
     return NextResponse.json({ message: "Internal server error" }, { status: 500 })

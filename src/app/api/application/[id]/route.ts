@@ -20,9 +20,14 @@ async function verifyAccess(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  await dbConnect()
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
+  const params = await props.params;
   await verifyAccess(req)
+  await dbConnect()
+  
 
   try {
     const session = await getSession()

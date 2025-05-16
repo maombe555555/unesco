@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/Mongodb"
 import User from "@/models/User"
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Invalid or expired session" }, { status: 401 })
     }
 
-    const userId = sessionData.userId
+    const userId = String(sessionData.userId)
     const email = sessionData.email
     const names = sessionData.names
 
@@ -40,14 +41,14 @@ export async function POST(request: Request) {
     await storeOTP(userId, otp)
 
     // Send OTP via email
-    await sendOTPEmail(email, names, otp)
+    await sendOTPEmail(String(email), String(names), String(otp))
 
     return NextResponse.json({ message: "OTP resent successfully" }, { status: 200 })
   } catch (error) {
     console.error("Error resending OTP:", error)
 
-    if (error.name === "ZodError") {
-      return NextResponse.json({ message: "Invalid form data", errors: error.errors }, { status: 400 })
+    if (typeof error === "object" && error !== null && "name" in error && (error as any).name === "ZodError") {
+      return NextResponse.json({ message: "Invalid form data", errors: (error as any).errors }, { status: 400 })
     }
 
     return NextResponse.json({ message: "Internal server error" }, { status: 500 })
