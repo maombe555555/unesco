@@ -13,6 +13,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react"
 import { ResetPasswordFormValues, resetPasswordSchema } from "@/lib/validations/auth"
 import { useForm } from "react-hook-form"
+import { Suspense } from 'react';
 
 export default function ResetPassword() {
   const router = useRouter()
@@ -104,6 +105,7 @@ export default function ResetPassword() {
   }
 
   return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
@@ -244,5 +246,6 @@ export default function ResetPassword() {
         </div>
       </div>
     </div>
+    </Suspense>
   )
 }

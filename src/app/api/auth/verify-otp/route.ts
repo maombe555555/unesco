@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/Mongodb"
 import User from "@/models/User"
@@ -23,10 +24,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Invalid or expired session" }, { status: 401 })
     }
 
-    const userId = sessionData.userId
-    const email = sessionData.email
-    const names = sessionData.names
-    const role = sessionData.role
+    const userId: string = String(sessionData.userId)
+    const email: string = String(sessionData.email)
+    const names: string = String(sessionData.names)
+    const role: string = String(sessionData.role)
     const rememberMe = sessionData.rememberMe || false
 
     // Find the user
@@ -60,8 +61,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error during OTP verification:", error)
 
-    if (error.name === "ZodError") {
-      return NextResponse.json({ message: "Invalid form data", errors: error.errors }, { status: 400 })
+    if (error && typeof error === "object" && "name" in error && (error as any).name === "ZodError") {
+      return NextResponse.json({ message: "Invalid form data", errors: (error as any).errors }, { status: 400 })
     }
 
     return NextResponse.json({ message: "Internal server error" }, { status: 500 })

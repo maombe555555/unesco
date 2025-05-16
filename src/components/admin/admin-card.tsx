@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Button, type ButtonProps } from "@/components/ui/button"
+import { Button,  } from "@/components/ui/button"
 
 interface AdminCardProps {
   title: string
   href: string
   icon: ReactNode
   emoji: string
-  variant?: ButtonProps["variant"]
+  variant?: any
   className?: string
 }
 

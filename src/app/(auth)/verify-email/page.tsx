@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Loader2, CheckCircle, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Suspense } from 'react';
 
 export default function VerifyEmailPage() {
   const router = useRouter()
@@ -52,6 +53,7 @@ export default function VerifyEmailPage() {
   }, [token])
 
   return (
+      <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
@@ -112,5 +114,6 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+    </Suspense>
   )
 }

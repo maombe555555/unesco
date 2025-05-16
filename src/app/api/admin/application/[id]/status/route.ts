@@ -20,7 +20,11 @@ async function verifyAdminAccess(req: NextRequest) {
 }
 
 // Update application status
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
+  const params = await props.params;
   await verifyAdminAccess(req)
   await dbConnect()
 

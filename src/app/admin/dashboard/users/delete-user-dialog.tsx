@@ -27,8 +27,8 @@ export default function DeleteUserDialog({ user, open, onOpenChange, onUserDelet
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      await deleteUser(user._id)
-      onUserDeleted(user._id)
+      await deleteUser(user._id as string)
+      onUserDeleted(user._id as string)
     } catch (error) {
       console.error("Failed to delete user:", error)
     } finally {

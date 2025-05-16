@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server"
 
 import { revalidatePath } from "next/cache"
@@ -33,9 +34,9 @@ export async function getAllUsers() {
     // Convert MongoDB documents to plain objects and ensure _id is properly serialized
     return users.map((user) => ({
       ...user,
-      _id: user._id.toString(),
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
+      _id: (user as { _id: any })._id.toString(),
+      createdAt: (user as unknown as { createdAt: Date }).createdAt.toISOString(),
+      updatedAt: (user as unknown as { updatedAt: Date }).updatedAt.toISOString(),
     }))
   } catch (error) {
     console.error("Error fetching users:", error)
@@ -73,7 +74,17 @@ export async function updateUser({
         isEmailVerified: userData.isEmailVerified,
       },
       { new: true, lean: true },
-    )
+    ) as unknown as {
+      _id: any
+      names: string
+      username: string
+      email: string
+      phone: string
+      role: string
+      isEmailVerified: boolean
+      createdAt: Date
+      updatedAt: Date
+    } | null
 
     if (!user) {
       throw new Error("User not found")
@@ -82,11 +93,15 @@ export async function updateUser({
     revalidatePath("/admin/dashboard/users")
 
     // Convert MongoDB document to plain object and ensure _id is properly serialized
-    return {
-      ...user,
-      _id: user._id.toString(),
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
+    if (user && !Array.isArray(user)) {
+      return {
+        ...user,
+        _id: user._id.toString(),
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString(),
+      }
+    } else {
+      throw new Error("Unexpected result: user is not a single document")
     }
   } catch (error) {
     console.error("Error updating user:", error)

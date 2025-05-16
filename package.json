@@ -10,7 +10,8 @@
     "generate-users": "node scripts/generate-demo-users.js",
     "disable-2fa": "node scripts/disable-2fa.js",
     "enable-2fa": "node scripts/enable-2fa.js",
-    "list-users": "node scripts/list-users.js"
+    "list-users": "node scripts/list-users.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -31,6 +32,7 @@
     "@radix-ui/react-slot": "^1.2.2",
     "@radix-ui/react-switch": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.11",
+    "@tanstack/react-table": "^8.21.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/mongodb": "^4.0.6",
     "axios": "^1.9.0",

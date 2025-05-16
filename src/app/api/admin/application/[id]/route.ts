@@ -20,7 +20,11 @@ async function verifyAdminAccess(req: NextRequest) {
 }
 
 // Get a single application by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
+  const params = await props.params;
   await verifyAdminAccess(req)
   await dbConnect()
 
@@ -48,7 +52,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // Update an application
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
+  const params = await props.params;
   await verifyAdminAccess(req)
   await dbConnect()
 
@@ -86,7 +94,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // Delete an application
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
+  const params = await props.params;
   await verifyAdminAccess(req)
   await dbConnect()
 

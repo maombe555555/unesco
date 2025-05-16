@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { loginSchema, LoginFormValues } from "@/lib/validations/auth"
+import { Suspense } from 'react';
 
 
 export default function Login() {
@@ -108,6 +109,7 @@ export default function Login() {
   }, [requiresTwoFactor, tempToken, router])
 
   return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
@@ -231,5 +233,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+    </Suspense>
   )
 }

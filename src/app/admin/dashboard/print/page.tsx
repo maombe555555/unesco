@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
+import {Suspense} from 'react'
 
 interface MarksBreakdownItem {
   criteria: string;
@@ -76,6 +77,7 @@ const SheetPrint: React.FC = () => {
   }
 
   return (
+        <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
     <div className="max-w-4xl mx-auto p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Application Sheet Print</h1>
@@ -131,6 +133,7 @@ const SheetPrint: React.FC = () => {
         </Link>
       </div>
     </div>
+    </Suspense>
   );
 };
 
