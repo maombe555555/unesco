@@ -87,7 +87,7 @@ export default function Contact() {
                   id="name"
                   {...register("name")}
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="mase emmy"
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 />
                 {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
@@ -102,7 +102,7 @@ export default function Contact() {
                   id="email"
                   {...register("email")}
                   type="email"
-                  placeholder="john.doe@example.com"
+                  placeholder="emmy@example.com"
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 />
                 {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
