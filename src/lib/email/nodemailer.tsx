@@ -13,7 +13,6 @@ export const transporter = nodemailer.createTransport({
 })
 
 
-
 export async function sendVerificationEmail(to: string, name: string, token: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   const verificationUrl = `${baseUrl}/verify-email?token=${token}`
